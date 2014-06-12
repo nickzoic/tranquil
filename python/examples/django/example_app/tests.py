@@ -28,10 +28,12 @@ class SomeTests(TestCase):
 
     def test_action_group(self):
         res = self._api_test(
-            { 'subject_count': [ [ 'subject' ], [ 'count' ] ],
-              'student_count': [ [ 'student' ], [ 'count' ] ]
+            { 'subject_count': [ 'subject', 'count' ],
+              'student_count': [ 'student', 'count' ]
             }
         )
         self.assertEqual(res, { 'subject_count': 4, 'student_count': 1 })
 
-
+    def test_students(self):
+        res = self._api_test(['student'])
+        self.assertEqual(res[0]['fields']['name'], 'Nick')

@@ -26,7 +26,10 @@ class BaseContext(object):
             if type(action) in (str, unicode): action = [ action ]
             new = self.action(*action)
             if actions: new = new.process(actions)
-            return new
+            if type(new) in (int,str,unicode):
+               return new 
+            else:
+               return new.serialize()
 
         elif type(actions) is dict:
             # actions is an Action Group

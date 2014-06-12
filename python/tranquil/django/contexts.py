@@ -19,5 +19,6 @@ class DjangoModelContext(BaseContext):
         return self.queryset.count()
 
     def serialize(self):
-        return serializers.serialize("json", self.queryset)
+	# XXX AWFUL HACK
+        return json.loads(serializers.serialize("json", self.queryset))
 
