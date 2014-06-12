@@ -1,0 +1,73 @@
+- model: example_app.school
+  pk: 1
+  fields:
+    name: Science
+
+- model: example_app.school
+  pk: 2
+  fields:
+    name: Engineering
+
+- model: example_app.subject
+  pk: 1
+  fields:
+    school: 1
+    name: Physics
+
+- model: example_app.subject
+  pk: 2 
+  fields:
+    school: 1
+    name: Chemistry
+
+- model: example_app.subject
+  pk: 3
+  fields:
+    school: 2
+    name: Power
+
+- model: example_app.subject
+  pk: 4 
+  fields:
+    school: 2
+    name: Control
+
+- model: example_app.course
+  pk: 1
+  fields:
+    name: InterestingCourse
+    subjects: [1,2,3,4]
+
+- model: example_app.student
+  pk: 1
+  fields: 
+    name: Nick
+    courses: [1]
+
+- model: example_app.enrol
+  pk: 1
+  fields:
+    subject: 1
+    student: 1
+    year: 2011
+
+- model: example_app.enrol
+  pk: 2
+  fields:
+    subject: 2
+    student: 1
+    year: 2012
+
+- model: example_app.enrol
+  pk: 3
+  fields:
+    subject: 3
+    student: 1
+    year: 2013
+
+- model: example_app.enrol
+  pk: 4
+  fields:
+    subject: 4
+    student: 1
+    year: 2014

@@ -12,6 +12,10 @@ class SubjectContext(DjangoModelContext):
     model = Subject
 
 
+class CourseContext(DjangoModelContext):
+    model = Course
+
+
 class StudentContext(DjangoModelContext):
     model = Student
 
@@ -19,10 +23,13 @@ class StudentContext(DjangoModelContext):
 class RootContext(BaseContext):
 
     def action_school(self):
-        return SchoolContext(self)
+        return SchoolContext(self.request)
 
     def action_subject(self):
-        return SubjectContext(self)
+        return SubjectContext()
+
+    def action_course(self):
+        return CourseContext()
 
     def action_student(self):
-        return StudentContext(self)
+        return StudentContext()
