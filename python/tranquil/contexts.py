@@ -31,8 +31,8 @@ class BaseContext(object):
         elif type(actions) is dict:
             # actions is an Action Group
             return dict([
-                (label, self.action(sub_actions))
-                for label, sub_actions in actions
+                (label, self.process(sub_actions))
+                for label, sub_actions in actions.items()
             ])
 
         elif type(actions) in (str, unicode):

@@ -17,9 +17,21 @@ class SomeTests(TestCase):
         self.assertEqual(response['Content-Type'], 'application/json')
         return json.loads(response.content)
 
-    def test_schools_list(self):
+    def test_subject_count(self):
 
        res = self._api_test(['subject', 'count'])
-       print res
+       self.assertEqual(res, 4)
+
+    def test_subject_filter_count(self):
+       res = self._api_test(['subject', [ 'filter', { 'school__id': 1 } ], 'count'])
+       self.assertEqual(res, 2)
+
+    def test_action_group(self):
+        res = self._api_test(
+            { 'subject_count': [ [ 'subject' ], [ 'count' ] ],
+              'student_count': [ [ 'student' ], [ 'count' ] ]
+            }
+        )
+        self.assertEqual(res, { 'subject_count': 4, 'student_count': 1 })
 
 
