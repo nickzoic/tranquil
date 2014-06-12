@@ -1,10 +1,18 @@
+==========
+ TRANQUIL
+==========
+
+
+Querying
+========
+
 Context
-=======
+-------
 
 Who are you and what do you want.
 
 Actions
-=======
+-------
 
 An action is either just an action_name or a list of action_name and some parameters.
 
@@ -19,7 +27,7 @@ Example actions::
     [ 'before', '2011-12-13' ]
 
 Action Lists
-============
+------------
 
 An action list is a list of actions, which compose left to right.
 
@@ -30,7 +38,7 @@ Example action_lists::
     [ [ 'filter', { 'is_author': true } ], 'count' ]
 
 Action Groups
-=============
+-------------
 
 An action group labels actions and runs them in parallel in the same context.
 
@@ -39,10 +47,22 @@ As a special case, if the righthand side is a string it is assumed to be an acti
 
     {
         'count': 'count',
-        'page': [ 'page', 0, 10 ] 
+        'page': [ 'page', 0, 5 ] 
     }
 
-action groups nest::
+The Action Labels are a convenience to the frontend programmer:
+they are used to construct a response.  For example, the above
+query returns something like::
+
+    {
+         'count': 107,
+         'page': [ {...}, {...}, {...}, {...}, {...} ]
+    }
+
+... so that you can conveniently refer to ``response.count`` and 
+``response.page[n]`` from javascript.
+
+Action groups nest::
 
     { 
         'authors': [
@@ -58,17 +78,17 @@ action groups nest::
         ]
     }
 
-will return authors.count and authors.top10.
+will return ``authors.count`` and ``authors.top10``.
 
-composable action groups::
+Composable action groups::
 
     { 
         'authors': [
             'users',
             [ 'filter': { 'is_author': true } ],
             { 
-                'male': { 'gender': 'M' },
-                'female': { 'gender': 'F' }
+                'male': [ 'filter', { 'gender': 'M' } ],
+                'female': [ 'filter', { 'gender': 'F' } ]
             },
             {
                 'count': 'count',
@@ -80,7 +100,9 @@ composable action groups::
         ]
     }
 
-will return authors.male.count and authors.female.count and authors.male.top10 and authors.female.top10
+... will assess the third action group for each of the actions in the second action
+group and thus return ``authors.male.count`` and ``authors.female.count`` and ``authors.male.top10`` and ``authors.female.top10``.
+This may not prove to be all that useful.
 
 
 Transport & Encoding
@@ -107,20 +129,3 @@ Transport could be by WebSockets or any of the message queue protocols.
 XML / ProtoBuf / ASN1 encodings would be easy to define.
 
 
-
-    
-
-An action is run within a context.
-
-
-
-An action is run within a context.
-An action has a name and some parameters and a 
-
-[ 'items', [
-    [ 'filter', {'type': 'whatever'} ],
-    { 'count': 'count', 'page': [ 'slice', [ 10, 15 ], 'all' ] },
-] ]
-
-
-[ 'items', 
