@@ -1,6 +1,6 @@
 """Django support for Tranquil"""
 
-from django.views.decorators.http import require_POST
+from django.http import HttpResponse, HttpResponseNotAllowed, HttpResponseBadRequest
 import json
 
 def context_class_to_view(context_class):
@@ -13,15 +13,15 @@ def context_class_to_view(context_class):
         if content_type != 'application/json':
             return HttpResponseBadRequest("bad content-type %s" % content_type)
         try:
-            req_data = json.load(request)
+            request_data = json.load(request)
         except ValueError as e:
             return HttpResponseBadRequest(str(e))
 
         context = context_class(request)
-        res_data = context.request(req_data)
+        response_data = context.process(request_data)
 
         return HttpResponse(
-            json.dumps(res_data),
+            json.dumps(response_data),
             content_type="application/json",
         )
 
