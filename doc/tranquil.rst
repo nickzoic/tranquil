@@ -236,9 +236,11 @@ frameworks (but has no error handling)::
         xhr.send(JSON.stringify(request));
     }
     
-    tranquil_request('/api', { user_count: [ "users", "count" ] }, function (response) {
-        alert(response.user_count);
-    });
+    tranquil_request(
+        '/api',
+        { user_count: [ "users", "count" ] },
+        function (response) { alert(response.user_count); }
+    );
     
     
 Using from jQuery
