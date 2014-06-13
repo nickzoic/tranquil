@@ -5,9 +5,9 @@ setup(
     version="0.0.1",
     author="Nick Moore",
     author_email="nick@zoic.org",
-    url="http://nick.zoic.org/",
+    url="https://github.com/nickzoic/tranquil",
     description="Tranquil Python Implementation",
-    download_url="http://nick.zoic.org/",
+    download_url="http://github.com/nickzoic/tranquil/tarball/0.0.1",
     keywords=["json", "ajax"],
     license='BSD',
     classifiers=[

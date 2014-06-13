@@ -1,6 +1,8 @@
 from tranquil.contexts import BaseContext
 from django.core import serializers
+
 import json
+
 
 class DjangoModelContext(BaseContext):
     # model is set up by the subclasses
@@ -18,8 +20,20 @@ class DjangoModelContext(BaseContext):
     def action_count(self):
         return self.queryset.count()
 
+    def action_update(self, fields_dict):
+	self.queryset.update(**fields_dict)
+	return self
+
+    def action_delete(self):
+	self.queryset.delete()
+	return None
+
     def serialize(self):
-	# XXX AWFUL HACK
+	# XXX AWFUL HACK ... this obviously needs to be improved a lot
+	# to handle weirder cases, recursion, etc.
+	# Can probably get a good start from
+	# django.core.serializers.python.Serializer
+
         return [
             dict([('id', x['pk'])] + x['fields'].items())
             for x in json.loads(serializers.serialize("json", self.queryset))
