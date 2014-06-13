@@ -38,17 +38,17 @@ as plain strings.*
 
 Example actions::
 
-    'count'
+    "count"
 
-    [ 'count' ]
+    [ "count" ]
 
-    [ 'before', '2011-12-13' ]
+    [ "before", "2011-12-13" ]
 
-    [ 'between', 7, 12 ]
+    [ "between", 7, 12 ]
 
-    [ 'colors', [ 'red', 'green', 'blue' ] ]
+    [ "colors", [ "red", "green", "blue" ] ]
 
-    [ 'filter', { 'is_active': true } ]
+    [ "filter", { "is_active": true } ]
 
 Action names are expected to be strings matching
 ``[A-Za-z0-9][A-Za-z0-9_]*`` although this may be expanded later.
@@ -61,9 +61,9 @@ An *action list* is a list of actions, which compose left to right.
 
 Example action_lists::
 
-    [ 'count' ]
+    [ "count" ]
 
-    [ [ 'filter', { 'is_author': true } ], 'count' ]
+    [ [ "filter", { "is_author": true } ], "count" ]
 
 In the second example, the initial context is first filtered
 to make a new context, then the number of records in the context
@@ -85,8 +85,8 @@ not an individual action.  A single action must be wrapped into an
 action list to avoid syntactic confusion::
 
     {
-        'count': 'count',
-        'page': [ [ 'page', 0, 5 ] ]
+        "count": "count",
+        "page": [ [ "page", 0, 5 ] ]
     }
 
 The *action labels* are a convenience to the frontend programmer:
@@ -94,8 +94,8 @@ they are used to construct a response.  For example, the above
 query returns something like::
 
     {
-         'count': 107,
-         'page': [ {...}, {...}, {...}, {...}, {...} ]
+         "count": 107,
+         "page": [ {...}, {...}, {...}, {...}, {...} ]
     }
 
 ... this is done for readability and so so that you can
@@ -109,14 +109,14 @@ Nesting Action Groups
 Action groups nest::
 
     { 
-        'authors': [
-            'users',
-            [ 'filter': { 'is_author': true } ],
+        "authors": [
+            "users",
+            [ "filter": { "is_author": true } ],
             {
-                'count': 'count',
-                'top10': [
-                    [ 'sort', '-score' ],
-                    [ 'page', 0, 10 ]
+                "count": "count",
+                "top10": [
+                    [ "sort", "-score" ],
+                    [ "page", 0, 10 ]
                 ]
             }
         ]
@@ -131,18 +131,18 @@ Composing Action Groups
 Composable action groups::
 
     { 
-        'authors': [
-            'users',
-            [ 'filter': { 'is_author': true } ],
+        "authors": [
+            "users",
+            [ "filter": { "is_author": true } ],
             { 
-                'male': [ 'filter', { 'gender': 'M' } ],
-                'female': [ 'filter', { 'gender': 'F' } ]
+                "male": [ "filter", { "gender": "M" } ],
+                "female": [ "filter", { "gender": "F" } ]
             },
             {
-                'count': 'count',
-                'top10': [
-                    [ 'sort', '-score' ],
-                    [ 'page', 0, 10 ]
+                "count": "count",
+                "top10": [
+                    [ "sort", "-score" ],
+                    [ "page", 0, 10 ]
                 ]
             }
         ]
@@ -165,9 +165,9 @@ mutate database state.  Operations apply to all resources in the
 current context::
 
     [
-        'users',
-        [ 'filter': { 'age': [ 'gt', '40' ] } ],
-        [ 'update': { 'trust': false } ]
+        "users",
+        [ "filter": { "age": [ "gt", "40" ] } ],
+        [ "update": { "trust": false } ]
     ]
 
 Mutating actions aren't limited to Create, Update and Delete.
@@ -189,7 +189,7 @@ HTTP POST requests::
     Content-Type: application/json
     Accept: application/json
 
-    { 'user_count': [ 'users', 'count' ] }
+    { "user_count": [ "users", "count" ] }
 
 The request body is interpreted as a JSON data structure and treated
 as an action list if an array or as an action group if an object.
@@ -199,7 +199,7 @@ HTTP response::
     200 OKAY
     Content-Type: application/json
 
-    { 'user_count': 107 }
+    { "user_count": 107 }
 
 In the case of JSON or Tranquil syntax errors, HTTP status
 ``400 BAD REQUEST`` is returned.  Other error codes may be returned
