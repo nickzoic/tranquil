@@ -1,35 +1,42 @@
-# XXX not actually used at the moment
-
 from tranquil.contexts import BaseContext
 
 
-def process_action_list(action_list, context_class):
+def process_action_list(action_list, context):
 
-    new_context = context_class()
+    new = context
     for action in action_list:
-        new_context = new_context.action(*action)
-    if isinstance(BaseContext, new_context):
-        return new_context.serialize()
+        if type(action) is dict:
+            new = process_action_group(action, new)
+        elif type(action) is list:
+            new = new.action(*action)
+        else:
+            new = new.action(action)
+
+    if isinstance(new, BaseContext):
+        return new.serialize()
     else:
-        return new_context
+        return new
 
 
-def process_action_group(action_group, context_class):
+def process_action_group(action_group, context):
 
     return dict([
-        (action_label, process_request(action, context_class))
-        for action_label, action in action_group.items():
+        (label, process_request(action, context))
+        for label, action in action_group.items()
     ])
 
 
-def process_request(action_data, context_class):
+def process_request(actions, context):
 
-    if type(action_data) is dict:
-        process_action_group(action_data, context_class)
-    elif type(action_data) is list:
-        process_action_list(action_data, context_class)
-    elif type(action_data) in (str, unicode):
-        process_action_list([[action_data]], context_class)
+    if type(actions) is dict:
+        return process_action_group(actions, context)
+
+    elif type(actions) is list:
+        return process_action_list(actions, context)
+
+    elif type(actions) in (str, unicode):
+        process_action_list([[actions]], context)
+
     else:
         raise NotImplementedError()
-         
+
