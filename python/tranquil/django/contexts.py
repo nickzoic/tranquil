@@ -20,5 +20,8 @@ class DjangoModelContext(BaseContext):
 
     def serialize(self):
 	# XXX AWFUL HACK
-        return json.loads(serializers.serialize("json", self.queryset))
+        return [
+            dict([('id', x['pk'])] + x['fields'].items())
+            for x in json.loads(serializers.serialize("json", self.queryset))
+        ]
 

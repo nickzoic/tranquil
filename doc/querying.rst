@@ -102,6 +102,9 @@ query returns something like::
 conveniently refer to ``response.count`` and ``response.page[n]``
 from javascript.
 
+Action labels should be valid javascript object keys matching
+``[A-Za-z0-9][A-Za-z0-9_]*``.
+
 
 Nesting Action Groups
 ~~~~~~~~~~~~~~~~~~~~~
@@ -222,8 +225,12 @@ Tranquil is transport-agnostic, so transport could be by WebSockets,
 AMPQ or avian carrier.
 
 
+Implementation
+==============
+
+
 Transactions
-============
+------------
 
 Where possible, the whole query should be handled in a single
 transaction, which should be rolled back if any part fails.  As 
@@ -234,9 +241,5 @@ Where nested transactions are available, each action list which
 contains a mutating action should have its own transaction, so
 that the results of the mutation are visible from subsequent actions
 in that action list but not from other action lists.
-
-
-Implementation
-==============
 
 
