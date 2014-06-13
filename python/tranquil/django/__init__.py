@@ -2,6 +2,7 @@
 
 from django.http import HttpResponse, HttpResponseNotAllowed, HttpResponseBadRequest
 import json
+from tranquil.request import process_request
 
 def context_class_to_view(context_class):
 
@@ -18,7 +19,7 @@ def context_class_to_view(context_class):
             return HttpResponseBadRequest(str(e))
 
         context = context_class(request)
-        response_data = context.process(request_data)
+        response_data = process_request(request_data, context)
 
         return HttpResponse(
             json.dumps(response_data),
