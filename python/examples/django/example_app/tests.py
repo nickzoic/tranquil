@@ -36,4 +36,5 @@ class SomeTests(TestCase):
 
     def test_students(self):
         res = self._api_test(['student'])
-        self.assertEqual(res[0]['fields']['name'], 'Nick')
+        print res
+        self.assertEqual(res[0]['name'], 'Nick')

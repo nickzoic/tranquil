@@ -112,6 +112,9 @@ query returns something like::
 conveniently refer to ``response.count`` and ``response.page[n]``
 from javascript.
 
+Action labels should be valid javascript object keys matching
+``[A-Za-z0-9][A-Za-z0-9_]*``.
+
 
 Nesting Action Groups
 ~~~~~~~~~~~~~~~~~~~~~
@@ -291,8 +294,12 @@ The same resources can be made available over multiple transports
 to allow for backwards compatibility.
 
 
+Implementation
+==============
+
+
 Transactions
-============
+------------
 
 Where possible, the whole query should be handled in a single
 transaction, which should be rolled back if any part fails.  As 
