@@ -1,9 +1,7 @@
 ==========
  TRANQUIL
 ==========
-----------------------------
- Nick Moore <nick@zoic.org> 
-----------------------------
+
 
 Tranquil is a protocol framework which helps define the way that a client 
 connects to a server.  It is designed to be very simple and very extensible.
@@ -314,8 +312,8 @@ Implementation
 Django
 ------
 
-`Django <http://djangoproject.com/`_ support includes a
+`Django <http://djangoproject.com/>`_ support includes a
 ``DjangoModelContext`` class which automatically makes available a 
 large part of the
-`Django query API <https://docs.djangoproject.com/en/1.6/topics/db/queries/`_
+`Django query API <https://docs.djangoproject.com/en/1.6/topics/db/queries/>`_
 for access to your models.
