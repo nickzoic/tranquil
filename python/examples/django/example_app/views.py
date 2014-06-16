@@ -9,18 +9,22 @@ from example_app.models import *
 
 
 class SchoolContext(DjangoModelContext):
+    """Schools"""
     model = School
 
 
 class SubjectContext(DjangoModelContext):
+    """Subjects"""
     model = Subject
 
 
 class CourseContext(DjangoModelContext):
+    """Courses"""
     model = Course
 
 
 class StudentContext(DjangoModelContext):
+    """Students"""
     model = Student
 
 
@@ -28,17 +32,21 @@ class StudentContext(DjangoModelContext):
 # but it'll do for now
 
 class RootContext(BaseContext):
-
+    """Root context to select between django models"""
     def action_school(self):
+        """schools"""
         return SchoolContext(self.request)
 
     def action_subject(self):
+        """subjects"""
         return SubjectContext(self.request)
 
     def action_course(self):
+        """courses"""
         return CourseContext(self.request)
 
     def action_student(self):
+        """students"""
         return StudentContext(self.request)
 
 

@@ -1,7 +1,9 @@
 from django.test import TestCase
 from django.core.urlresolvers import reverse
+from tranquil.django.contexts import DjangoModelContext
 import example_app.views
 import json
+
 
 api_view_url = reverse(example_app.views.api_view)
 
@@ -36,5 +38,9 @@ class SomeTests(TestCase):
 
     def test_students(self):
         res = self._api_test(['student'])
-        print res
         self.assertEqual(res[0]['name'], 'Nick')
+
+    def test_meta(self):
+        res = self._api_test(['student', 'meta'])
+        self.assertEqual(res['desc'], example_app.views.StudentContext.__doc__)
+        self.assertEqual(res['actions']['meta']['desc'], DjangoModelContext.action_meta.__doc__)
