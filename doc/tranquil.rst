@@ -1,18 +1,40 @@
 ==========
  TRANQUIL
 ==========
+------
+ v0.1
+------
+
+*Tranquil* is a protocol framework which helps define the communication
+between web client and server.
+It is designed to be very simple and very extensible.
+
+Tranquil is similar in intention to
+`REST <http://en.wikipedia.org/wiki/Representational_state_transfer>`_,
+however:
+
+* Tranquil is transport agnostic.
+* Tranquil allows multiple queries per request.
+* Tranquil actions are composable and extensible.
+
+By contrast with `JSON-RPC <http://json-rpc.org/>`_ and
+`SOAPjr <http://www.soapjr.org/>`_, Tranquil places more emphasis on
+entities and less on methods, with the intention of reducing the
+proliferation of custom methods.
 
 
-Tranquil is a protocol framework which helps define the way that a client 
-connects to a server.  It is designed to be very simple and very extensible.
-
-In terms of complexity, it fits somewhere between
-`REST <http://en.wikipedia.org/wiki/Representational_state_transfer>`_
-and `SOAPjr <http://www.soapjr.org/>`_.
-
-
-Querying
+Requests
 ========
+
+Tranquil requests can contain multiple queries, encoded into a single
+datastructure which describes what operations to perform and what data
+is to be returned.
+
+By standardizing the form of requests, front-end developers are able to
+adjust for their own requirements and back-end developers can enforce
+uniform business rules across all requests.  By encoding requests as 
+JSON (etc) data structures, issues of parsing and encoding queries are
+eliminated.
 
 
 Context
@@ -20,11 +42,13 @@ Context
 
 A *context* describes a group of resources.
 For example, a context could be "all users" or "all active users"
-or "all users over 35".
+or "all users over 35" or "all contacts for user number 12345".
 
-A context is specific to a request, so it knows who is asking and
-can enforce business rules.  For example, a context for an unauthorized
-user may retrieve fewer fields from the user object that the context
+A context is specific to a request, so context methods have access
+to authentication and session information and can enforce business rules.
+For example, a context for an unauthorized
+user may have access to fewer resources and perform fewer actions on 
+those resources than the context
 for an administrator user.
 
 
@@ -33,15 +57,22 @@ Actions
 
 *Actions* transform contexts into other contexts
 **OR** into data which is returned in the response.
-For example, the "all users" context could be transformed into 
+For example, the "all users" context could be transformed into
 the "users over 35" context using a "filter" action.
+
+Basic actions include the usual
+`Create, Read, Update and Delete <http://en.wikipedia.org/wiki/Create,_read,_update_and_delete>`_
+but actions may also include more complex operations such as
+`Map, Reduce <http://en.wikipedia.org/wiki/MapReduce>`_
+and `Atomic <http://en.wikipedia.org/wiki/Atomic_(computer_science)>`_
+increments, appends and so on.
 
 Not all actions return a new context: some may produce
 data for return to the client.
 
 An action is represented as a list of an *action_name*
 and some *parameters*.  Parameters can be any data type,
-and there may be multiple of them.
+and there may be multiple of them.  Because parameters
 
 *As a shortcut, actions without parameters can be represented
 as plain strings.*
@@ -59,9 +90,6 @@ Example actions::
     [ "colors", [ "red", "green", "blue" ] ]
 
     [ "filter", { "is_active": true } ]
-
-Action names are expected to be strings matching
-``[A-Za-z0-9][A-Za-z0-9_]*`` although this may be expanded later.
 
 
 Action Lists
@@ -91,7 +119,7 @@ The structure is ``{ action_label: action_list }``.
 to be the name of a single action with no parameters.*
 
 However, if the righthand side is a list it **MUST** be an action list,
-not an individual action.  A single action must be wrapped into an 
+not an individual action.  A single action must be wrapped into an
 action list to avoid syntactic confusion::
 
     {
@@ -112,16 +140,13 @@ query returns something like::
 conveniently refer to ``response.count`` and ``response.page[n]``
 from javascript.
 
-Action labels should be valid javascript object keys matching
-``[A-Za-z0-9][A-Za-z0-9_]*``.
-
 
 Nesting Action Groups
 ~~~~~~~~~~~~~~~~~~~~~
 
 Action groups nest::
 
-    { 
+    {
         "authors": [
             "users",
             [ "filter": { "is_author": true } ],
@@ -143,11 +168,11 @@ Composing Action Groups
 
 Composable action groups::
 
-    { 
+    {
         "authors": [
             "users",
             [ "filter": { "is_author": true } ],
-            { 
+            {
                 "male": [ "filter", { "gender": "M" } ],
                 "female": [ "filter", { "gender": "F" } ]
             },
@@ -173,8 +198,8 @@ choose to not support it.*
 Writing with Actions
 --------------------
 
-The examples above are all read-only actions.  Actions may also 
-mutate database state.  Operations apply to all resources in the 
+The examples above are all read-only actions.  Actions may also
+mutate database state.  Operations apply to all resources in the
 current context::
 
     [
@@ -185,11 +210,28 @@ current context::
 
 Mutating actions aren't limited to Create, Update and Delete.
 For example, actions could be defined for Increment, Append,
-Shuffle, Swap.
+Shuffle, Swap.  Mutating actions can also return data, allowing
+for safe appends and increments and so on.
+
+
+Transactions
+------------
+
+Where possible, the whole query should be handled in a single
+database transaction, which should be rolled back if any part fails.  As
+a Tranquil API can run on non-Transactional stores, or across
+multiple stores, this may not always be possible.
+
+Where nested transactions are available, each action list which
+contains a mutating action should have its own transaction, so
+that the results of the mutation are visible from subsequent actions
+in that action list but not from other action lists.
 
 
 Transport & Encoding
 ====================
+
+Tranquil is transport- and encoding-agnostic.
 
 
 HTTP POST and JSON
@@ -218,11 +260,14 @@ In the case of JSON or Tranquil syntax errors, HTTP status
 ``400 Bad Request`` is returned.  Other error codes may be returned
 for other issues.
 
+A single URL endpoint is used for all contexts.  Keeping the message
+details out of the URL simplifies request encoding.
+
 
 Using from vanilla javascript
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-A very simple example which doesn't need any external libraries or 
+A very simple example which doesn't need any external libraries or
 frameworks (but has no error handling)::
 
     function tranquil_request(url, request, callback) {
@@ -238,14 +283,14 @@ frameworks (but has no error handling)::
         xhr.open('POST', url, true);
         xhr.send(JSON.stringify(request));
     }
-    
+
     tranquil_request(
         '/api',
         { user_count: [ "users", "count" ] },
         function (response) { alert(response.user_count); }
     );
-    
-    
+
+
 Using from jQuery
 ~~~~~~~~~~~~~~~~~
 
@@ -254,7 +299,7 @@ Using `jQuery's AJAX function <http://api.jquery.com/jQuery.ajax/>`_::
     var request = {
         user_count: [ "users", "count" ]
     };
-    
+
     $.ajax({
         type: "POST",
         url: "/api",
@@ -263,19 +308,19 @@ Using `jQuery's AJAX function <http://api.jquery.com/jQuery.ajax/>`_::
         dataType: "json",
         data: JSON.stringify(request)
     }).done(function (response, jqxhr) {
-        alert(jqxhr.responseJSON.user_count);        
+        alert(jqxhr.responseJSON.user_count);
     });
 
 
 Other Encodings
 ---------------
 
-The above examples are all in JSON, but 
+The above examples are all in JSON, but
 `ProtoBuf <https://code.google.com/p/protobuf/>`_ /
 `XML <http://www.w3.org/XML/>`_ /
 `ASN1 <http://en.wikipedia.org/wiki/Abstract_Syntax_Notation_One>`_ /
 `S-expression <http://rosettacode.org/wiki/S-Expressions>`_
-encodings would be easy to define 
+encodings would be easy to define
 if there was a need to do so.
 
 Implementations using HTTP transport
@@ -286,43 +331,57 @@ which encoding is appropriate for requests and responses.
 Other Transports
 ----------------
 
-Tranquil is transport-agnostic, so transport could be by 
+Tranquil is transport-agnostic, so transport could be by
 `WebSockets <http://websocket.org/>`_, `AMQP <http://amqp.org/>`_
 or `avian carrier <http://www.ietf.org/rfc/rfc1149.txt>`_.
 
-The same resources can be made available over multiple transports 
-to allow for backwards compatibility.
+The same resources can be made available over multiple transports
+and encodings to allow for access from multiple platforms or for
+backwards compatibility.
 
 
 Implementation
 ==============
 
+Reference implementations are in progress ... see
+`Tranquil on Github <https://github.com/nickzoic/tranquil/>`_
 
-Transactions
-------------
-
-Where possible, the whole query should be handled in a single
-transaction, which should be rolled back if any part fails.  As 
-a Tranquil API can run on non-Transactional stores, or across 
-multiple stores, this may not always be possible.
-
-Where nested transactions are available, each action list which 
-contains a mutating action should have its own transaction, so
-that the results of the mutation are visible from subsequent actions
-in that action list but not from other action lists.
-
-
-Implementation
-==============
-
-**In progress ...**
+They are not very advanced yet and contributions for these and
+other platforms are welcomed!
 
 
 Django
 ------
 
 `Django <http://djangoproject.com/>`_ support includes a
-``DjangoModelContext`` class which automatically makes available a 
+``DjangoModelContext`` class which automatically makes available a
 large part of the
 `Django query API <https://docs.djangoproject.com/en/1.6/topics/db/queries/>`_
 for access to your models.
+A *root context* exports models as actions, allowing requests across multiple Models.
+
+Context classes are easily customizable to enforce business rules.
+Context instances are initialized with the Django request object to allow
+access to authentication and session information.
+
+A "meta" action on DjangoModelContexts returns metadata about the current context
+and its available actions, making the Tranquil API (somewhat) self-documenting
+assuming good docstrings on the Context classes and methods.
+
+
+MongoDB / Tornado
+-----------------
+
+Also planned is an implementation using
+`Tornado <http://www.tornadoweb.org/>`_ to provide HTTP and Websocket
+access to `MongoDB <http://mongodb.org/>`_ collections.
+
+
+More Information
+================
+
+For more information see:
+
+* `Tranquil on Github <https://github.com/nickzoic/tranquil/>`_
+* `Nick Moore <http://nick.zoic.org/>`_
+
