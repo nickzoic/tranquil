@@ -18,7 +18,7 @@ however:
 * Tranquil actions are composable and extensible.
 
 By contrast with `JSON-RPC <http://json-rpc.org/>`_ and
-`SOAPjr <http://www.soapjr.org/>`_, Tranquil places more emphasis on
+`SOAPjr <http://en.wikipedia.org/wiki/SOAPjr>`_, Tranquil places more emphasis on
 entities and less on methods, with the intention of reducing the
 proliferation of custom methods.
 
