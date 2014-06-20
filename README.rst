@@ -12,5 +12,7 @@ and `SOAPjr <http://www.soapjr.org/>`_.
 
 * `Documentation <doc/tranquil.rst>`_
 * `License <LICENSE.rst>`_
+* `Python Implementation <python/>`_
+* `Node.js Implementation <nodejs/>`_
 
 Author: `Nick Moore <http://nick.zoic.org/>`_

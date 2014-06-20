@@ -6,3 +6,4 @@ db.sqlite3
 *.wpu
 doc/*.pdf
 python/*.egg-info
+node_modules

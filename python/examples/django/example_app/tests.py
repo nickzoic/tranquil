@@ -21,12 +21,12 @@ class SomeTests(TestCase):
 
     def test_subject_count(self):
 
-       res = self._api_test(['subject', 'count'])
-       self.assertEqual(res, 4)
+        res = self._api_test(['subject', 'count'])
+        self.assertEqual(res, 4)
 
     def test_subject_filter_count(self):
-       res = self._api_test(['subject', [ 'filter', { 'school__id': 1 } ], 'count'])
-       self.assertEqual(res, 2)
+        res = self._api_test(['subject', [ 'filter', { 'school__id': 1 } ], 'count'])
+        self.assertEqual(res, 2)
 
     def test_action_group(self):
         res = self._api_test(

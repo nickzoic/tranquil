@@ -1,0 +1,8 @@
+*.pyc
+Env
+.*.swp
+db.sqlite3
+*.wpr
+*.wpu
+npm-debug.log
+.git

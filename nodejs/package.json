@@ -1,0 +1,27 @@
+{
+  "name": "tranquil-api",
+  "version": "0.0.1",
+  "description": "Implementation of Tranquil API for Node.js",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nickzoic/tranquil.git"
+  },
+  "keywords": [
+    "tranquil",
+    "api"
+  ],
+  "author": {
+      "name": "Nick Moore",
+      "email": "nick@zoic.org",
+      "url": "http://nick.zoic.org/"
+  },
+  "license": "BSD-2-Clause",
+  "bugs": {
+    "url": "https://github.com/nickzoic/tranquil/issues"
+  },
+  "homepage": "https://github.com/nickzoic/tranquil"
+}
